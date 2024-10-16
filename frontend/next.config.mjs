@@ -43,8 +43,8 @@ const nextConfig = {
             value: 'public, max-age=60',
           },
           {
-            key: 'Last-Modified',
-            value: 'Sat, 12 Oct 2024 00:00:00 GMT'
+            key: 'ETag',
+            value: '1111111111111'
           },
           {
             key: 'Transfer-Encoding',
