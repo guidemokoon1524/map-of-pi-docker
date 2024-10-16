@@ -7,6 +7,5 @@ module.exports = {
     instances: 4,
     out_file: './log/out.log',
     error_file: './log/error.log',
-    interpreter_args: '--prof'
   }]
 }
