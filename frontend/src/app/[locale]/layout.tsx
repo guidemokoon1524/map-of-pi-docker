@@ -1,5 +1,8 @@
 import { NextIntlClientProvider, useMessages } from 'next-intl';
+import { setRequestLocale } from 'next-intl/server';
 import { Lato } from 'next/font/google';
+
+import { locales } from '@/navigation';
 
 import { Providers } from '../providers';
 
@@ -9,6 +12,10 @@ import logger from '../../../logger.config.mjs';
 
 const lato = Lato({ weight: '400', subsets: ['latin'], display: 'swap' });
 
+export async function generateStaticParams() {
+  return locales.map((locale) => { locale })
+};
+
 export default function LocaleLayout({
   children,
   params: { locale },
@@ -16,6 +23,9 @@ export default function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
+  // Enable static rendering
+  setRequestLocale(locale);
+
   // Receive messages provided in `i18n.ts`
   const messages = useMessages();
 
