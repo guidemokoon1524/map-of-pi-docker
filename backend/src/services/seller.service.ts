@@ -146,7 +146,7 @@ export const registerOrUpdateSeller = async (authUser: IUser, formData: any, ima
     const existingSeller = await Seller.findOne({ seller_id: authUser.pi_uid }).exec();
 
     // Parse and validate sell_map_center from formData
-    const sellMapCenter = formData.sell_map_center 
+    const sellMapCenter = (formData.sell_map_center && formData.sell_map_center !== 'undefined')
       ? JSON.parse(formData.sell_map_center)
       : existingSeller?.sell_map_center || { type: 'Point', coordinates: [0, 0] };
 
