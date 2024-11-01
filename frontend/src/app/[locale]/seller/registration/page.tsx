@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useContext } from 'react';
-import { toast } from 'react-toastify';
 
 import TrustMeter from '@/components/shared/Review/TrustMeter';
 import { OutlineBtn, Button } from '@/components/shared/Forms/Buttons/Buttons';
@@ -33,7 +32,7 @@ const SellerRegistrationForm = () => {
   const t = useTranslations();
   const placeholderSeller = itemData.seller;
   
-  const { currentUser, autoLoginUser } = useContext(AppContext);
+  const { currentUser, autoLoginUser, showAlert } = useContext(AppContext);
 
   type IFormData = {
     sellerName: string;
@@ -88,7 +87,7 @@ const SellerRegistrationForm = () => {
           setDbSeller(null);
         }
       } catch (error) {
-        logger.error('Error fetching seller data:', { error });
+        logger.error('Error fetching seller data:', error);
         setError('Error fetching seller data.');
       } finally {
         setLoading(false);
@@ -106,7 +105,7 @@ const SellerRegistrationForm = () => {
           setDbUserSettings(null);
         }
       } catch (error) {
-        logger.error('Error fetching user settings data:', { error });
+        logger.error('Error fetching user settings data:', error);
       }
     };
 
@@ -129,7 +128,7 @@ const SellerRegistrationForm = () => {
       });
     } else {
       setFormData({
-        sellerName: translatedPreFilledText['retail-outlet-name'],
+        sellerName: currentUser?.pi_username || '',
         sellerType: translatedSellerTypeOptions[2].value,
         sellerDescription: translatedPreFilledText['seller-description'],
         sellerAddress: translatedPreFilledText['seller-address'],
@@ -217,7 +216,8 @@ const SellerRegistrationForm = () => {
     // Check if user is authenticated and form is valid
     if (!currentUser) {
       logger.warn('Form submission failed: User not authenticated.');
-      return toast.error(t('SHARED.VALIDATION.SUBMISSION_FAILED_USER_NOT_AUTHENTICATED'));
+      showAlert(t('SHARED.VALIDATION.SUBMISSION_FAILED_USER_NOT_AUTHENTICATED'));
+      return;
     }
 
     preFilledFields.forEach(({ fieldName, preFilledTextKey }) => {
@@ -247,14 +247,15 @@ const SellerRegistrationForm = () => {
         setDbSeller(data.seller);
         setIsSaveEnabled(false);
         logger.info('Seller registration saved successfully:', { data });
-        toast.success(t('SCREEN.SELLER_REGISTRATION.VALIDATION.SUCCESSFUL_REGISTRATION_SUBMISSION'));
+        showAlert(t('SCREEN.SELLER_REGISTRATION.VALIDATION.SUCCESSFUL_REGISTRATION_SUBMISSION'));
         
         // Fetch updated user settings
         const updatedUserSettings = await fetchUserSettings();
         setDbUserSettings(updatedUserSettings);
       }
     } catch (error) {
-      logger.error('Error saving seller registration:', { error });
+      logger.error('Error saving seller registration:', error);
+      showAlert(t('SCREEN.SELLER_REGISTRATION.VALIDATION.FAILED_REGISTRATION_SUBMISSION'));
     }
   };
 
@@ -272,7 +273,6 @@ const SellerRegistrationForm = () => {
   };
 
   const translatedPreFilledText = {
-    'retail-outlet-name': t('SCREEN.SELLER_REGISTRATION.SELLER_RETAIL_OUTLET_PLACEHOLDER'),
     'seller-description': t('SCREEN.SELLER_REGISTRATION.SELLER_DETAILS_PLACEHOLDER'),
     'seller-address': t('SCREEN.SELLER_REGISTRATION.SELLER_ADDRESS_LOCATION_PLACEHOLDER'),
   };
@@ -281,7 +281,6 @@ const SellerRegistrationForm = () => {
     fieldName: keyof IFormData;
     preFilledTextKey: keyof typeof translatedPreFilledText;
   }[] = [
-      { fieldName: 'sellerName', preFilledTextKey: 'retail-outlet-name' },
       { fieldName: 'sellerDescription', preFilledTextKey: 'seller-description' },
       { fieldName: 'sellerAddress', preFilledTextKey: 'seller-address' },
     ];
@@ -339,11 +338,11 @@ const SellerRegistrationForm = () => {
           <h2 className={SUBHEADER}>
             {t('SCREEN.SELLER_REGISTRATION.SELLER_DETAILS_LABEL')}
           </h2>
-          <p className="text-gray-400 text-sm">
-            {t('SCREEN.SELLER_REGISTRATION.SELLER_DETAILS_PLACEHOLDER')}
-          </p>
           <div className="mb-2">
             <TextArea
+              placeholder={t(
+                'SCREEN.SELLER_REGISTRATION.SELLER_DETAILS_PLACEHOLDER',
+              )}
               name="sellerDescription"
               value={formData.sellerDescription}
               onChange={handleChange}
@@ -411,7 +410,7 @@ const SellerRegistrationForm = () => {
                 label={t(
                   'SCREEN.SELLER_REGISTRATION.SELLER_ADDRESS_LOCATION_LABEL',
                 )}
-                describe={t(
+                placeholder={t(
                   'SCREEN.SELLER_REGISTRATION.SELLER_ADDRESS_LOCATION_PLACEHOLDER',
                 )}
                 name="sellerAddress"

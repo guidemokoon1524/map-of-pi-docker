@@ -67,6 +67,7 @@ function SellerReviews({
   const fetchUserReviews = async () => {
     setError(null);
     try {
+      setToUser(userId);
       logger.info(`Fetching reviews for userID: ${userId}`);
       const data = await fetchReviews(userId);
 
@@ -93,7 +94,7 @@ function SellerReviews({
         setReceiverReviews([]);
       }
     } catch (error) {
-      logger.error(`Error fetching reviews for userID: ${userId}`, { error });
+      logger.error(`Error fetching reviews for userID: ${userId}`, error);
       setError('Error fetching reviews. Please try again later.');
     } finally {
       setLoading(false);
@@ -137,7 +138,7 @@ function SellerReviews({
         setReceiverReviews([]);
       }
     } catch (error) {
-      logger.error(`Pioneer ${searchBarValue} not found`, { error });
+      logger.error(`Pioneer ${searchBarValue} not found`, error);
       return toast.error(t('SCREEN.REVIEWS.VALIDATION.NO_PIONEER_FOUND', { search_value: searchBarValue }));
     } finally {
       setReload(false);
@@ -177,6 +178,15 @@ function SellerReviews({
               onChange={handleSearchBarChange}
               ref={inputRef}
               autoCorrect="off"
+              autoCapitalize="off"
+              autoComplete="off" 
+              spellCheck="false" 
+              inputProps={{
+                autoCorrect: 'off',
+                autoCapitalize: 'off',
+                spellCheck: 'false',
+                autoComplete: 'new-password',
+              }}
             />
           </FormControl>
           <button
@@ -190,7 +200,7 @@ function SellerReviews({
 
         <ToggleCollapse header={t('SCREEN.REVIEWS.GIVE_REVIEW_SECTION_HEADER')}>
           <div>
-            <EmojiPicker sellerId={toUser} setIsSaveEnabled={setIsSaveEnabled} currentUser={currentUser} setReload={setReload} refresh={fetchUserReviews} />
+            <EmojiPicker userId={toUser} setIsSaveEnabled={setIsSaveEnabled} currentUser={currentUser} setReload={setReload} refresh={fetchUserReviews} />
           </div>
         </ToggleCollapse>      
         <ToggleCollapse header={t('SCREEN.REVIEWS.REVIEWS_GIVEN_SECTION_HEADER')}>
@@ -215,13 +225,15 @@ function SellerReviews({
                       <p>{review.time}</p>
                     </div>
                     <div className="flex gap-2 items-center">
-                      <Image
-                        src={review.image}
-                        alt="emoji image"
-                        width={50}
-                        height={50}
-                        className="object-cover rounded-md"
-                      />
+                      {review.image ? (
+                        <Image
+                          src={review.image}
+                          alt="emoji image"
+                          width={50}
+                          height={50}
+                          className="object-cover rounded-md"
+                        />
+                      ) : null}
                       <p className="text-xl max-w-[50px]" title={review.reaction}>
                         {review.unicode}
                       </p>
@@ -260,13 +272,15 @@ function SellerReviews({
                     <p>{review.time}</p>
                   </div>
                   <div className="flex gap-2 items-center">
-                    <Image
-                      src={review.image}
-                      alt="emoji image"
-                      width={50}
-                      height={50}
-                      className="object-cover rounded-md"
-                    />
+                    {review.image ? (
+                      <Image
+                        src={review.image}
+                        alt="emoji image"
+                        width={50}
+                        height={50}
+                        className="object-cover rounded-md"
+                      />
+                    ) : null}
                     <p className="text-xl max-w-[50px]" title={review.reaction}>
                       {review.unicode}
                     </p>
