@@ -79,7 +79,6 @@ function SellerReviews({
           logger.warn(`No given reviews found for userID: ${userId}`);
           setGiverReviews([]);
         }
-        setToUser(userId); // Set toUser for the main seller regardless of givenReviews (as long as there's no error)
 
         if (data.receivedReviews.length > 0) {
           logger.info(`Fetched ${data.receivedReviews.length} reviews received by userID: ${userId}`);
