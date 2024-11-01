@@ -76,10 +76,16 @@ export const getAllSellers = async (
         ...aggregatedCriteria,
         sell_map_center: {
           $geoWithin: {
-            $box: [
-              [bounds.sw_lng, bounds.sw_lat],
-              [bounds.ne_lng, bounds.ne_lat]
-            ]
+            $geometry: {
+              type: "Polygon",
+              coordinates: [ [
+                [bounds.sw_lng, bounds.sw_lat],
+                [bounds.ne_lng, bounds.sw_lat],
+                [bounds.ne_lng, bounds.ne_lat],
+                [bounds.sw_lng, bounds.ne_lat],
+                [bounds.sw_lng, bounds.sw_lat]
+              ] ]
+            }
           }
         }
       })
