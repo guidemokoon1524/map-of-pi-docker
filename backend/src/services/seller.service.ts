@@ -85,14 +85,14 @@ export const getAllSellers = async (
       })
       .sort({ updatedAt: -1 }) // Sort by last updated
       .limit(maxNumSellers)
-      .hint({ 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' })
+      .hint({ 'seller_type': 1, 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' })
       .exec();
     } else {
       // If no bounds are provided, return all sellers (without geo-filtering)  
       sellers = await Seller.find(aggregatedCriteria)
         .sort({ updatedAt: -1 })
         .limit(maxNumSellers)
-        .hint({ 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' })
+        .hint({ 'seller_type': 1, 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' })
         .exec();
     }
 

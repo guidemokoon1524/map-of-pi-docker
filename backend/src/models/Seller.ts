@@ -61,7 +61,7 @@
   // Creating a 2dsphere index for the sell_map_center field
   sellerSchema.index({ 'sell_map_center.coordinates': '2dsphere' });
   sellerSchema.index(
-    { 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' },
+    { 'seller_type': 1, 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' },
     { partialFilterExpression: { seller_type: { $in: Object.values(VisibleSellerType) } } }
   );
 
