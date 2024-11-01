@@ -57,7 +57,7 @@ export default function BuyFromSellerForm({ params }: { params: { id: string } }
           logger.warn(`No seller shop info found for seller ID: ${sellerId}`);
         }
       } catch (error) {
-        logger.error(`Error fetching seller data for seller ID: ${ sellerId }`, { error });
+        logger.error(`Error fetching seller data for seller ID: ${ sellerId }`, error);
         setError('Error fetching seller data');
       } finally {
         setLoading(false);
@@ -75,7 +75,7 @@ export default function BuyFromSellerForm({ params }: { params: { id: string } }
           logger.warn(`No seller settings found for seller ID: ${sellerId}`);
         }
       } catch (error) {
-        logger.error(`Error fetching seller settings for seller ID: ${ sellerId }`, { error });
+        logger.error(`Error fetching seller settings for seller ID: ${ sellerId }`, error);
         setError('Error fetching seller settings');
       }
     };
@@ -117,7 +117,7 @@ export default function BuyFromSellerForm({ params }: { params: { id: string } }
           <div className="rounded-[50%] w-[65px] h-[65px] relative">
             <Image 
               className="rounded-[50%]" 
-              src={sellerShopInfo.image && sellerShopInfo.image.trim() !== "" ? sellerShopInfo.image : process.env.NEXT_PUBLIC_IMAGE_PLACEHOLDER_URL || '/images/shared/upload.png'} 
+              src={sellerShopInfo.image && sellerShopInfo.image.trim() !== "" ? sellerShopInfo.image : 'images/logo.svg' }
               alt="seller logo" 
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

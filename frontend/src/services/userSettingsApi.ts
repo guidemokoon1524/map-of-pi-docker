@@ -17,12 +17,8 @@ export const fetchUserSettings = async () => {
       logger.error(`Fetch user settings failed with Status ${response.status}`);
       return null;
     }
-  } catch (error: any) {
-    logger.error('Fetch user settings encountered an error:', { 
-      message: error.message,
-      config: error.config,
-      stack: error.stack
-    });
+  } catch (error) {
+    logger.error('Fetch user settings encountered an error:', error);
     throw new Error('Failed to fetch user settings. Please try again later.');
   }
 };
@@ -41,12 +37,8 @@ export const fetchSingleUserSettings = async (sellerId: String) => {
       logger.error(`Fetch single user settings failed with Status ${response.status}`);
       return null;
     }
-  } catch (error: any) {
-    logger.error('Fetch single user settings encountered an error:', { 
-      message: error.message,
-      config: error.config,
-      stack: error.stack
-    });
+  } catch (error) {
+    logger.error('Fetch single user settings encountered an error:', error);
     throw new Error('Failed to fetch single user settings. Please try again later.');
   }
 };
@@ -68,12 +60,8 @@ export const createUserSettings = async (formData: FormData) => {
       logger.error(`Create or update user settings failed with Status ${response.status}`);
       return null;
     }
-  } catch (error: any) {
-    logger.error('Create or update user settings encountered an error:', { 
-      message: error.message,
-      config: error.config,
-      stack: error.stack
-    });
+  } catch (error) {
+    logger.error('Create or update user settings encountered an error:', error);
     throw new Error('Failed to create or update user settings. Please try again later.');
   }
 };
@@ -93,13 +81,8 @@ export const fetchUserLocation = async () => {
       logger.error(`Fetch user location failed with Status ${response.status}`);
       return null;
     }
-  } catch (error: any) {
-    logger.error('Fetch user location encountered an error:', { error });
-    logger.error('Create or update user settings encountered an error:', { 
-      message: error.message,
-      config: error.config,
-      stack: error.stack
-    });
+  } catch (error) {
+    logger.error('Fetch user location encountered an error:', error);
     throw error;
   }
 };

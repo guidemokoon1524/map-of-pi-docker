@@ -24,7 +24,7 @@ interface ReplyToReviewPageProps {
   };
 }
 
-export default function ReplyToReviewPage({ params, searchParams }: ReplyToReviewPageProps) {
+export default function ReplyToReviewPage({ params }: ReplyToReviewPageProps) {
   const t = useTranslations();
   const router = useRouter();
 
@@ -55,7 +55,7 @@ export default function ReplyToReviewPage({ params, searchParams }: ReplyToRevie
         reviewId: feedback._id,
         reaction,
         unicode,
-        image: feedback.image || '/path/to/default/image.png',  // Use a fallback image if not provided
+        image: feedback.image
       };
     });
   };
@@ -83,7 +83,7 @@ export default function ReplyToReviewPage({ params, searchParams }: ReplyToRevie
           setReviews([]);
         }
       } catch (error) {
-        logger.error(`Error fetching review data for review ID: ${reviewId}`, { error });
+        logger.error(`Error fetching review data for review ID: ${reviewId}`, error);
         setError('Error fetching review. Please try again later.');
       } finally {
         setLoading(false);
@@ -148,13 +148,15 @@ export default function ReplyToReviewPage({ params, searchParams }: ReplyToRevie
                         <p>{review.time}</p>
                       </div>
                       <div className="flex gap-2 items-center">
-                        <Image
-                          src={review.image}
-                          alt="emoji image"
-                          width={50}
-                          height={50}
-                          className="object-cover rounded-md"
-                        />
+                        {review.image ? (
+                          <Image
+                            src={review.image}
+                            alt="emoji image"
+                            width={50}
+                            height={50}
+                            className="object-cover rounded-md"
+                          />
+                        ) : null}
                         <p className="text-xl max-w-[50px]" title={review.reaction}>
                           {review.unicode}
                         </p>
@@ -191,7 +193,7 @@ export default function ReplyToReviewPage({ params, searchParams }: ReplyToRevie
               : reviews[currentIndex].giver}
           </h2>
           <EmojiPicker
-            sellerId={
+            userId={
               currentUser?.pi_uid === reviews[currentIndex].giverId
                 ? reviews[currentIndex]?.receiverId
                 : reviews[currentIndex].giverId

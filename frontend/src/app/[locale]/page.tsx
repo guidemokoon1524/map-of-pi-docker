@@ -61,7 +61,7 @@ export default function Index() {
           setSearchCenter(null)
         }
       } catch (error) {
-        logger.error('Error fetching user settings data:', { error });
+        logger.error('Error fetching user settings data:', error);
       }
     };
 
@@ -110,7 +110,7 @@ export default function Index() {
         setSearchResults(results || []); // Update searchResults
       }
     } catch (error) {
-      logger.error('Failed to fetch sellers for search query.', { error });
+      logger.error('Failed to fetch sellers for search query.', error);
     }
   };
 

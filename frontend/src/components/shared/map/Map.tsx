@@ -34,7 +34,7 @@ const fetchSellerCoordinates = async (
 
     return sellersWithCoordinates;
   } catch (error) {
-    logger.error('Error fetching seller coordinates:', { error });
+    logger.error('Error fetching seller coordinates:', error);
     throw error;
   }
 };
@@ -193,7 +193,7 @@ const Map = ({
         setSellers(sellersData);
       }
     } catch (error) {
-      logger.error('Failed to fetch initial coordinates:', { error });
+      logger.error('Failed to fetch initial coordinates:', error);
       setError('Failed to fetch initial coordinates');
     } finally {
       setLoading(false);
@@ -223,7 +223,7 @@ const Map = ({
       });
 
     } catch (error) {
-      logger.error('Failed to fetch additional data:', { error });
+      logger.error('Failed to fetch additional data:', error);
       setError('Failed to fetch additional data');
     } finally {
       setLoading(false);

@@ -93,18 +93,18 @@ export default function EmojiPicker(props: any) {
   const handleSave = async () => {
     try {
       if (props.currentUser) {
-        if (props.currentUser.pi_uid === props.sellerId) {
+        if (props.currentUser.pi_uid === props.userId) {
           logger.warn(`Attempted self review by user ${props.currentUser.pi_uid}`);
-          toast.error(t('SCREEN.REPLY_TO_REVIEW.VALIDATION.SELF_REVIEW_NOT_POSSIBLE'));
+          return toast.error(t('SCREEN.REPLY_TO_REVIEW.VALIDATION.SELF_REVIEW_NOT_POSSIBLE'));
         }
         if (reviewEmoji === null) {
           logger.warn('Attempted to save review without selecting an emoji.');
-          return window.alert(t('SHARED.REACTION_RATING.VALIDATION.SELECT_EMOJI_EXPRESSION'));
+          return toast.warn(t('SHARED.REACTION_RATING.VALIDATION.SELECT_EMOJI_EXPRESSION'));
         } else {
           const formDataToSend = new FormData();
           formDataToSend.append('comment', removeUrls(comments));
           formDataToSend.append('rating', reviewEmoji.toString());
-          formDataToSend.append('review_receiver_id', props.sellerId);
+          formDataToSend.append('review_receiver_id', props.userId);
           formDataToSend.append('reply_to_review_id', props.replyToReviewId || '');
 
           // add the image if it exists
@@ -119,6 +119,7 @@ export default function EmojiPicker(props: any) {
           const newReview = await createReview(formDataToSend);
           if (newReview) {
             toast.success(t('SHARED.REACTION_RATING.VALIDATION.SUCCESSFUL_REVIEW_SUBMISSION'));
+            resetReview();
             props.setReload(true);
             props.refresh();
             logger.info('Review submitted successfully');
@@ -129,8 +130,8 @@ export default function EmojiPicker(props: any) {
         logger.warn('Unable to submit review; user not authenticated.');
         toast.error(t('SHARED.VALIDATION.SUBMISSION_FAILED_USER_NOT_AUTHENTICATED'));
       }
-    } catch (error: any) {
-      logger.error('Error saving review:', { error: error?.message });
+    } catch (error) {
+      logger.error('Error saving review:', error);
     }
   };
   
