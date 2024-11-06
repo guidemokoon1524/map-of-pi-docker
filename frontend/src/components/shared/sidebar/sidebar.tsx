@@ -58,7 +58,7 @@ function Sidebar(props: any) {
 
   const t = useTranslations();
   const pathname = usePathname();
-  const local = useLocale();
+  const locale = useLocale();
   const router = useRouter();
 
   const { currentUser, autoLoginUser, setReload, showAlert } = useContext(AppContext);
@@ -254,7 +254,7 @@ function Sidebar(props: any) {
         setIsSaveEnabled(false);
         logger.info('User Settings saved successfully:', { data });
         showAlert(t('SIDE_NAVIGATION.VALIDATION.SUCCESSFUL_PREFERENCES_SUBMISSION'));
-        if (pathname === '/' || pathname === `/${local}`) {
+        if (pathname === '/' || pathname === `/${locale}`) {
           setReload(true);
         }
       }
@@ -339,7 +339,7 @@ function Sidebar(props: any) {
                   fontSize: '18px' 
                 }}
                 onClick={() => {
-                  router.push(`/map-center?entryType=search`);
+                  router.push(`/${locale}/map-center?entryType=search`);
                   props.setToggleDis(false); // Close sidebar on click
                 }}
               />
@@ -378,7 +378,7 @@ function Sidebar(props: any) {
               <h3 className={`font-bold text-sm text-nowrap`}>Trust-o-meter</h3>
               <TrustMeter ratings={dbUserSettings ? dbUserSettings.trust_meter_rating : 100} hideLabel={true} />
             </div>             
-            <Link href={currentUser ? `/seller/reviews/${currentUser?.pi_uid}` : '#'}>
+            <Link href={currentUser ? `/${locale}/seller/reviews/${currentUser?.pi_uid}?user_name=${currentUser.user_name}` : '#'}>
               <OutlineBtn
                 label={t('SHARED.CHECK_REVIEWS')}
                 styles={{
@@ -469,18 +469,20 @@ function Sidebar(props: any) {
                   ))}
                        
                 </div>
-                <Button
-                  label={t('SHARED.SAVE')}
-                  styles={{
-                    color: '#ffc153',
-                    height: '40px',
-                    width: '80px',
-                    padding: '10px 15px',
-                    marginLeft: 'auto',
-                    marginRight: 'auto'
-                  }}
-                  onClick={handleSave}
-                />
+                <div className="mb-3 mt-3">
+                  <Button
+                    label={t('SHARED.SAVE')}
+                    styles={{
+                      color: '#ffc153',
+                      height: '40px',
+                      width: '80px',
+                      padding: '10px 15px',
+                      marginLeft: 'auto',
+                      marginRight: 'auto'
+                    }}
+                    onClick={handleSave}
+                  />
+                </div>
               </ToggleCollapse>              
             </div>
             <div className='flex flex-col justify-items-center mx-auto text-center'>
@@ -514,6 +516,7 @@ function Sidebar(props: any) {
       {/* Conditionally render MapCenter */}
       {showMapCenter && (
         <MapCenter
+          locale={locale}
           entryType="search"
         />
       )}

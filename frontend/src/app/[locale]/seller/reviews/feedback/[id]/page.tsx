@@ -10,6 +10,7 @@ import EmojiPicker from '@/components/shared/Review/emojipicker';
 import Skeleton from '@/components/skeleton/skeleton';
 import { IReviewOutput, ReviewInt } from '@/constants/types';
 import { fetchSingleReview } from '@/services/reviewsApi';
+import { checkAndAutoLoginUser } from '@/utils/auth';
 import { resolveDate } from '@/utils/date';
 import { resolveRating } from '../../util/ratingUtils';
 import { AppContext } from '../../../../../../../context/AppContextProvider';
@@ -61,10 +62,7 @@ export default function ReplyToReviewPage({ params }: ReplyToReviewPageProps) {
   };
 
   useEffect(() => {
-    if (!currentUser) {
-      logger.info('User not logged in; attempting auto-login..');
-      autoLoginUser();
-    }
+    checkAndAutoLoginUser(currentUser, autoLoginUser);
 
     const getReviewData = async () => {
       try {
@@ -188,7 +186,7 @@ export default function ReplyToReviewPage({ params }: ReplyToReviewPageProps) {
 
           <h2 className="font-bold">{t('SCREEN.REPLY_TO_REVIEW.GIVE_REPLY_TO_REVIEW_SUBHEADER')}</h2>
           <h2 className="text-[#828282]">
-            {t('To')}: {currentUser?.user_name === reviews[currentIndex].giver
+            {currentUser?.user_name === reviews[currentIndex].giver
               ? reviews[currentIndex]?.receiver
               : reviews[currentIndex].giver}
           </h2>

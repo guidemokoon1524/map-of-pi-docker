@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useContext } from 'react';
@@ -21,6 +21,7 @@ import { itemData } from '@/constants/demoAPI';
 import { IUserSettings, ISeller } from '@/constants/types';
 import { fetchSellerRegistration, registerSeller } from '@/services/sellerApi';
 import { fetchUserSettings } from '@/services/userSettingsApi';
+import { checkAndAutoLoginUser } from '@/utils/auth';
 import removeUrls from '../../../../utils/sanitize';
 import { AppContext } from '../../../../../context/AppContextProvider';
 import logger from '../../../../../logger.config.mjs';
@@ -29,6 +30,7 @@ const SellerRegistrationForm = () => {
   const HEADER = 'font-bold text-lg md:text-2xl';
   const SUBHEADER = 'font-bold mb-2';
   const router = useRouter();
+  const locale = useLocale();
   const t = useTranslations();
   const placeholderSeller = itemData.seller;
   
@@ -70,13 +72,9 @@ const SellerRegistrationForm = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
 
-
   // Fetch seller data and user settings on component mount
   useEffect(() => {
-    if (!currentUser) {
-      logger.info('User not logged in; attempting auto-login..');
-      autoLoginUser();
-    }
+    checkAndAutoLoginUser(currentUser, autoLoginUser);
 
     const getSellerData = async () => {
       try {
@@ -365,7 +363,7 @@ const SellerRegistrationForm = () => {
         </div>
         <Link
           href={{
-            pathname: '/map-center', // Path to MapCenter component
+            pathname: `/${locale}/map-center`, // Path to MapCenter component
             query: { entryType: 'sell' }, // Passing 'sell' as entryType
           }}>
           <Button
@@ -462,7 +460,7 @@ const SellerRegistrationForm = () => {
                 <Link
                   href={
                     dbSeller
-                      ? `/seller/reviews/${dbSeller.seller_id}?user_name=${currentUser?.pi_username}`
+                      ? `/${locale}/seller/reviews/${dbSeller.seller_id}?user_name=${currentUser?.pi_username}`
                       : '#'
                   }>
                   <OutlineBtn
@@ -477,7 +475,7 @@ const SellerRegistrationForm = () => {
                   onClick={() =>
                     handleNavigation(
                       dbSeller
-                        ? `/seller/reviews/${dbSeller.seller_id}?user_name=${currentUser?.pi_username}`
+                        ? `/${locale}/seller/reviews/${dbSeller.seller_id}?user_name=${currentUser?.pi_username}`
                         : '#',
                     )
                   }
