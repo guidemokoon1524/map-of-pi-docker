@@ -12,13 +12,15 @@ import SearchBar from '@/components/shared/SearchBar/SearchBar';
 import { fetchSellers } from '@/services/sellerApi';
 import { fetchUserSettings } from '@/services/userSettingsApi';
 import { DeviceLocationType, IUserSettings } from '@/constants/types';
+import { checkAndAutoLoginUser } from '@/utils/auth';
 import { userLocation } from '@/utils/geolocation';
 
 import { AppContext } from '../../../context/AppContextProvider';
 import logger from '../../../logger.config.mjs';
 
-export default function Index() {
+export default function Page({ params }: { params: { locale: string } }) {
   const t = useTranslations();
+  const { locale } = params;
   const DynamicMap = dynamic(() => import('@/components/shared/map/Map'), {
     ssr: false,
   });
@@ -37,11 +39,13 @@ export default function Index() {
   const { isSigningInUser, currentUser, autoLoginUser, reload, setReload } = useContext(AppContext);
 
   useEffect(() => {
-    setReload(false)
-    if (!currentUser) {
-      logger.info("User not logged in; attempting auto-login..");
-      autoLoginUser();
+    // clear previous map state when findme option is changed
+    if (reload) {
+      sessionStorage.removeItem('prevMapCenter');
+      sessionStorage.removeItem('prevMapZoom');
     }
+    setReload(false)
+    checkAndAutoLoginUser(currentUser, autoLoginUser);
 
     const getUserSettingsData = async () => {
       try {
@@ -84,6 +88,9 @@ export default function Index() {
   }, [dbUserSettings]);
 
   const handleLocationButtonClick = async () => {
+    // clear previous map state when findme option is changed
+    sessionStorage.removeItem('prevMapCenter');
+    sessionStorage.removeItem('prevMapZoom');
     if (dbUserSettings) {
       const loc = await userLocation(dbUserSettings);
       if (loc) {
@@ -129,7 +136,7 @@ export default function Index() {
         <div className="w-[90%] lg:w-full lg:px-6 mx-auto flex items-center justify-between">
           {/* Add Seller Button */}
           <div className="pointer-events-auto">
-            <Link href="/seller/registration">
+            <Link href={`/${locale}/seller/registration`}>
               <Button
                 label={'+ ' + t('HOME.ADD_SELLER')}
                 styles={{

@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
+import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'react-toastify';
 
 import { FileInput, TextArea } from '../Forms/Inputs/Inputs';
@@ -214,8 +215,8 @@ export default function EmojiPicker(props: any) {
         <button
           onClick={handleSave}
           disabled={!isSaveEnabled}
-          className={`${isSaveEnabled ? 'opacity-100' : 'opacity-50'} px-6 py-2 bg-primary text-white text-xl rounded-md flex justify-right ms-auto text-[15px]`}>
-          {t('SHARED.SAVE')}
+          className={`${isSaveEnabled ? 'opacity-100' : 'opacity-50'} px-6 py-2 bg-primary text-white text-xl rounded-md flex justify-right ms-auto text-[15px]`}> 
+            {t('SHARED.SAVE')}
         </button>
       </div>
     </div>
