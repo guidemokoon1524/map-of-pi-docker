@@ -22,6 +22,9 @@ RUN yarn global add pm2
 # Copy PM2 configuration
 COPY ./docker/ecosystem.config.js ./ecosystem.config.js
 
+# Copy Node scripts
+COPY ./tasks ./tasks
+
 # Create log directory
 RUN mkdir -p log && touch log/.keep
 
