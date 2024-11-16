@@ -1,7 +1,7 @@
 import Seller from "../models/Seller";
 import User from "../models/User";
 import UserSettings from "../models/UserSettings";
-import { SellerType } from '../models/enums/sellerType'
+import { VisibleSellerType } from '../models/enums/sellerType';
 import { getUserSettingsById } from "./userSettings.service";
 import { ISeller, IUser, IUserSettings, ISellerWithSettings } from "../types";
 
@@ -55,8 +55,8 @@ export const getAllSellers = async (
     const maxNumSellers = 36;
 
     // always apply this condition to exclude 'Inactive sellers'
-    const baseCriteria = { seller_type: { $ne: SellerType.Inactive } };
-    
+    const baseCriteria = { seller_type: { $in: Object.values(VisibleSellerType) } };
+
     // if search_query is provided, add search conditions
     const searchCriteria = search_query
       ? {
@@ -76,21 +76,29 @@ export const getAllSellers = async (
         ...aggregatedCriteria,
         sell_map_center: {
           $geoWithin: {
-            $box: [
-              [bounds.sw_lng, bounds.sw_lat],
-              [bounds.ne_lng, bounds.ne_lat]
-            ]
+            $geometry: {
+              type: "Polygon",
+              coordinates: [ [
+                [bounds.sw_lng, bounds.sw_lat],
+                [bounds.ne_lng, bounds.sw_lat],
+                [bounds.ne_lng, bounds.ne_lat],
+                [bounds.sw_lng, bounds.ne_lat],
+                [bounds.sw_lng, bounds.sw_lat]
+              ] ]
+            }
           }
         }
       })
-      .sort({ review_count: -1, updated_at: -1 }) // Sort by review count and last updated
+      .sort({ updatedAt: -1 }) // Sort by last updated
       .limit(maxNumSellers)
+      .hint({ 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' })
       .exec();
     } else {
       // If no bounds are provided, return all sellers (without geo-filtering)  
       sellers = await Seller.find(aggregatedCriteria)
-        .sort({ review_count: -1, updated_at: -1 })
+        .sort({ updatedAt: -1 })
         .limit(maxNumSellers)
+        .hint({ 'updatedAt': -1, 'sell_map_center.coordinates': '2dsphere' })
         .exec();
     }
 
@@ -134,7 +142,7 @@ export const registerOrUpdateSeller = async (authUser: IUser, formData: any, ima
     const existingSeller = await Seller.findOne({ seller_id: authUser.pi_uid }).exec();
 
     // Parse and validate sell_map_center from formData
-    const sellMapCenter = formData.sell_map_center 
+    const sellMapCenter = (formData.sell_map_center && formData.sell_map_center !== 'undefined')
       ? JSON.parse(formData.sell_map_center)
       : existingSeller?.sell_map_center || { type: 'Point', coordinates: [0, 0] };
 
