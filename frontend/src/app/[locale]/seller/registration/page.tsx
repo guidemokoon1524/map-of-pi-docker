@@ -512,6 +512,7 @@ const SellerRegistrationForm = () => {
                 onChange={(value: any) =>
                   handleChange({ name: 'phone_number', value })
                 }
+                smartCaret={false}
               />
             </div>
             <div className="mb-4">
