@@ -9,6 +9,7 @@ import { useContext, useEffect, useState, useRef } from 'react';
 
 import { Button } from '@/components/shared/Forms/Buttons/Buttons';
 import SearchBar from '@/components/shared/SearchBar/SearchBar';
+import ConfirmDialog from '@/components/shared/confirm';
 import { fetchSellers } from '@/services/sellerApi';
 import { fetchUserSettings } from '@/services/userSettingsApi';
 import { DeviceLocationType, IUserSettings } from '@/constants/types';
@@ -36,6 +37,7 @@ export default function Page({ params }: { params: { locale: string } }) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchClicked, setSearchClicked] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const { isSigningInUser, currentUser, autoLoginUser, reload, setReload } = useContext(AppContext);
 
   useEffect(() => {
@@ -44,7 +46,8 @@ export default function Page({ params }: { params: { locale: string } }) {
       sessionStorage.removeItem('prevMapCenter');
       sessionStorage.removeItem('prevMapZoom');
     }
-    setReload(false)
+    setReload(false);
+    setShowPopup(false);
     checkAndAutoLoginUser(currentUser, autoLoginUser);
 
     const getUserSettingsData = async () => {
@@ -54,10 +57,14 @@ export default function Page({ params }: { params: { locale: string } }) {
           logger.info('Fetched user settings data successfully:', { data });
           setDbUserSettings(data);
           if (data.search_map_center?.coordinates) {
-            setSearchCenter({
+            const coordinates = {
               lat: data.search_map_center.coordinates[1],
               lng: data.search_map_center.coordinates[0],
-            });
+            }
+            setSearchCenter(coordinates);
+            if (coordinates.lat === 0 && coordinates.lng === 0) {
+              setShowPopup(true);
+            }
           }
         } else {
           logger.warn('User Settings not found.');
@@ -173,6 +180,12 @@ export default function Page({ params }: { params: { locale: string } }) {
             />
           </div>
         </div>
+        {showPopup && <ConfirmDialog
+          show={setShowPopup} 
+          onClose={()=> setShowPopup(false)}
+          message={t('HOME.SEARCH_CENTER_DEFAULT_MESSAGE')} 
+          url={`/map-center?entryType=search`}
+        />}
       </div>
     </>
   );
