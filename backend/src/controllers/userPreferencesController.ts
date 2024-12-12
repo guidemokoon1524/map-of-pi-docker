@@ -44,7 +44,7 @@ export const addUserPreferences = async (req: Request, res: Response) => {
 
     if (!authUser) {
       logger.warn("No authenticated user found for user preferences.");
-      return res.status(401).json({ message: "Unauthorized user" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     // image file handling (have to ts-ignore because tsc thinks the file can't have a location property, even though it can and does)
@@ -81,7 +81,7 @@ export const getUserLocation = async (req: Request, res: Response) => {
     const zoom = 13;
     if (!authUser?.pi_uid) {
       logger.warn(`User not authenticated`);
-      return res.status(401).json({ message: "User not authenticated" });      
+      return res.status(401).json({ message: "Unauthorized" });      
     }
 
     location = await userSettingsService.userLocation(authUser.pi_uid);
