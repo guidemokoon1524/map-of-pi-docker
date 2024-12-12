@@ -6,11 +6,13 @@ import User from '../src/models/User';
 import UserSettings from '../src/models/UserSettings';
 import Seller from '../src/models/Seller';
 import ReviewFeedback from '../src/models/ReviewFeedback';
+import SanctionedRegion from '../src/models/misc/SanctionedRegion';
 
 // mock the Winston logger
 jest.mock('../src/config/loggingConfig', () => ({
-  info: jest.fn(),
   debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
   error: jest.fn(),
 }));
 
@@ -33,6 +35,7 @@ beforeAll(async () => {
     await Seller.createIndexes();
     await Seller.insertMany(mockData.sellers);
     await ReviewFeedback.insertMany(mockData.reviews);
+    await SanctionedRegion.insertMany(mockData.sanctionedRegion);
   } catch (error) {
     console.error('Failed to start MongoMemoryServer', error);
     throw error;
