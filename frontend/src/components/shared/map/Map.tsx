@@ -383,7 +383,7 @@ const Map = ({
               }}
             >
               <Popup
-                closeButton={true}
+                closeButton={false}
                 minWidth={140}
                 maxWidth={190}
                 className="custom-popup"
