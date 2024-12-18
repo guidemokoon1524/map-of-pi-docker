@@ -1,7 +1,7 @@
 // usage: node move_documents.js sourceCollection targetCollection batchSize
 
 const mongoose = require('mongoose');
-const dbConnection = require('../build/src/config/dbConnection.js')
+const dbConnection = require('../build/src/config/dbConnection.js');
 // NOTE: This file will need to be manually uploaded to the pod running this script
 const documentIds = require('./documentIds.json');
 
